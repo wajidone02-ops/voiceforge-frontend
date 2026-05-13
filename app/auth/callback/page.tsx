@@ -13,37 +13,93 @@ export default function AuthCallbackPage() {
           process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
         )
 
-        // Supabase session lo
+        // URL se session extract karo
         const { data, error } = await supabase.auth.getSession()
+
         if (error || !data.session) {
-          window.location.href = "/login"
+          // Hash fragment se token extract karo
+          const hashParams = new URLSearchParams(
+            window.location.hash.substring(1)
+          )
+          const accessToken = hashParams.get("access_token")
+          const refreshToken = hashParams.get("refresh_token")
+
+          if (!accessToken) {
+            alert("Login failed. Please try again.")
+            window.location.href = "/login"
+            return
+          }
+
+          // Session set karo manually
+          const { data: sessionData, error: sessionError } =
+            await supabase.auth.setSession({
+              access_token: accessToken,
+              refresh_token: refreshToken ?? "",
+            })
+
+          if (sessionError || !sessionData.session) {
+            alert("Session error. Please try again.")
+            window.location.href = "/login"
+            return
+          }
+
+          // Token save karo directly
+          localStorage.setItem("token", accessToken)
+
+          // Backend ko notify karo — credits setup
+          try {
+            const res = await fetch(`${API}/auth/google`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ access_token: accessToken }),
+            })
+            const result = await res.json()
+
+            if (!res.ok) {
+              alert(result.detail || "Account issue.")
+              localStorage.removeItem("token")
+              window.location.href = "/login"
+              return
+            }
+
+            localStorage.setItem("token", result.access_token)
+          } catch {
+            // Backend call fail — but token save hai, proceed karo
+          }
+
+          window.location.href = "/generate"
           return
         }
 
-        const googleToken = data.session.access_token
+        // Session already exists
+        const accessToken = data.session.access_token
+        localStorage.setItem("token", accessToken)
 
-        // Backend ko bhejo — blacklist check + credits setup
-        const res = await fetch(`${API}/auth/google`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ access_token: googleToken }),
-        })
+        // Backend ko notify karo
+        try {
+          const res = await fetch(`${API}/auth/google`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ access_token: accessToken }),
+          })
+          const result = await res.json()
 
-        const result = await res.json()
+          if (!res.ok) {
+            alert(result.detail || "Account issue.")
+            localStorage.removeItem("token")
+            window.location.href = "/login"
+            return
+          }
 
-        if (!res.ok) {
-          // Blacklisted account
-          localStorage.removeItem("token")
-          alert(result.detail || "Login fail ho gaya.")
-          window.location.href = "/login"
-          return
+          localStorage.setItem("token", result.access_token)
+        } catch {
+          // Proceed anyway
         }
 
-        // Token save karo
-        localStorage.setItem("token", result.access_token)
         window.location.href = "/generate"
       } catch (err) {
         console.error("Callback error:", err)
+        alert("Something went wrong. Please try again.")
         window.location.href = "/login"
       }
     }
@@ -58,7 +114,7 @@ export default function AuthCallbackPage() {
           <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" strokeOpacity="0.3" />
           <path d="M21 12a9 9 0 00-9-9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
         </svg>
-        <p className="text-sm">Google se verify ho raha hai...</p>
+        <p className="text-sm">Signing you in...</p>
       </div>
     </div>
   )
