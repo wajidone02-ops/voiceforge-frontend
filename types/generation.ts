@@ -1,4 +1,4 @@
-export type AIModel = "chatterbox" | "coqui" | "piper"
+export type AIModel = "swift" | "studio"
 
 export type Generation = {
   id: string
