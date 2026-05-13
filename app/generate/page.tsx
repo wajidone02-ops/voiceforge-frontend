@@ -70,7 +70,7 @@ export default function GeneratePage() {
           "Content-Type": "application/json",
           "authorization": `Bearer ${token}`
         },
-        body: JSON.stringify({ text, voice: "af_bella", speed })
+        body: JSON.stringify({ text, voice, speed })
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.detail || "Error")
