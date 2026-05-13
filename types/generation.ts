@@ -7,6 +7,6 @@ export type Generation = {
   voice: string
   audioUrl: string
   createdAt: string
-  charsUsed: number
+  chars_used: number
   duration: number
 }
