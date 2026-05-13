@@ -22,7 +22,7 @@ export default function GeneratePage() {
   })
 
   const [text, setText] = useState("")
-  const [model, setModel] = useState<AIModel>("chatterbox")
+  const [model, setModel] = useState<AIModel>("swift")
   const [voice, setVoice] = useState("af_bella")
   const [speed, setSpeed] = useState(1.0)
   const [btnState, setBtnState] = useState<ButtonState>("idle")
