@@ -6,5 +6,5 @@ export type User = {
   name: string
   credits: number
   plan: Plan
-  created_at: string
+  createdAt: string
 }
