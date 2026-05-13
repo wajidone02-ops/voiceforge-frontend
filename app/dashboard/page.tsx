@@ -9,9 +9,8 @@ import { Generation } from "@/types/generation"
 const API = process.env.NEXT_PUBLIC_API_URL
 
 const MODEL_COLORS: Record<string, string> = {
-  kokoro: "text-[#3ecf8e] bg-[#3ecf8e]/10",
-  chatterbox: "text-blue-400 bg-blue-400/10",
-  piper: "text-yellow-400 bg-yellow-400/10",
+  swift: "text-[#3ecf8e] bg-[#3ecf8e]/10",
+  studio: "text-purple-400 bg-purple-400/10",
 }
 
 function formatDate(iso: string) {

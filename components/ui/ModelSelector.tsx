@@ -13,7 +13,7 @@ interface Model {
 
 const MODELS: Model[] = [
   {
-    id: "chatterbox",
+    id: "swift",
     name: "Swift",
     description: "Fast, lightweight — best for quick generations",
     badge: "Available",
@@ -21,7 +21,7 @@ const MODELS: Model[] = [
     icon: "⚡",
   },
   {
-    id: "coqui",
+    id: "studio",
     name: "Studio",
     description: "High quality + voice cloning — coming soon",
     badge: "Coming Soon",
