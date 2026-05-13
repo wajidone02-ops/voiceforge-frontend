@@ -6,7 +6,7 @@ export type Generation = {
   model: AIModel
   voice: string
   audioUrl: string
-  createdAt: string
+  created_at: string
   chars_used: number
   duration: number
 }
